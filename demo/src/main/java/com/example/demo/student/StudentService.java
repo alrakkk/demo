@@ -22,6 +22,33 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+
+    public List<Student> getStudentsById(Long id){
+        return studentRepository.findById(id)
+                .map(List::of)
+                .orElse(List.of());
+    }
+
+    public List<Student> getStudentsByName(String name){
+        return studentRepository.findByNameStartsWith(name);
+    }
+
+    public List<Student> getStudentsByEmail(String email){
+        return studentRepository.findByEmailStartsWith(email);
+    }
+
+    public List<Student> getStudentsBornAfter(LocalDate dobAfter){
+        return studentRepository.findByDobAfter(dobAfter);
+    }
+
+    public List<Student> getStudentsBornBefore(LocalDate dobBefore){
+        return studentRepository.findByDobBefore(dobBefore);
+    }
+
+    public List<Student> getStudentsBornBetween(LocalDate dobAfter, LocalDate dobBefore){
+        return studentRepository.findByDobBetween(dobAfter, dobBefore);
+    }
+
     public void addNewStudent(Student student) {
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
         if (studentOptional.isPresent()){
@@ -59,4 +86,5 @@ public class StudentService {
             student.setEmail(email);
         }
     }
+
 }
