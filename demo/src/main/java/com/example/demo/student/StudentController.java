@@ -50,7 +50,7 @@ public class StudentController {
 
     private void validateParameters(String name, String email, Long id, LocalDate dobAfter, LocalDate dobBefore) {
         boolean areMultipleParametersPresent = (coutNotNull(name, email, id) > 1) ||
-                (dobAfter != null || dobBefore != null && coutNotNull(name, email, id) >0);
+                ((dobAfter != null || dobBefore != null) && coutNotNull(name, email, id) >0);
 
         if (areMultipleParametersPresent) {
             throw new IllegalArgumentException("Pretraživanje nije dozvoljeno.");
