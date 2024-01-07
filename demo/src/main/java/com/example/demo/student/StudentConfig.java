@@ -12,7 +12,7 @@ import java.util.List;
 public class StudentConfig {
 
     @Bean
-    CommandLineRunner commandLineRunner(StudentRepository repository){
+    CommandLineRunner commandLineRunner(StudentRepository studentRepository){
         return args -> {
             Student mariam = new Student(
                     1L,
@@ -38,7 +38,7 @@ public class StudentConfig {
                     LocalDate.of(1998, Month.JUNE, 22)
             );
 
-            repository.saveAll(
+            studentRepository.saveAll(
                     List.of(mariam, alex, roko, lana)
             );
 

@@ -28,7 +28,4 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByDobBetween(LocalDate dobAfter, LocalDate dobBefore);
 
 
-
-
-
 }

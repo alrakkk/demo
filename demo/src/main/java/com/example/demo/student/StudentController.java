@@ -1,10 +1,11 @@
 package com.example.demo.student;
 
-import jakarta.transaction.Transactional;
+import com.example.demo.course.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -21,32 +22,56 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getStudents(
+    public List<StudentDto> getStudents(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) LocalDate dobAfter,
             @RequestParam(required = false) LocalDate dobBefore
-
-    ){
+    ) {
         validateParameters(name, email, id, dobAfter, dobBefore);
 
-        if(id != null){
-            return studentService.getStudentsById(id);
-        }else if(name != null){
-            return studentService.getStudentsByName(name);
-        }else if (email != null){
-            return studentService.getStudentsByEmail(email);
-        }else if(dobAfter != null && dobBefore != null){
-            return studentService.getStudentsBornBetween(dobAfter, dobBefore);
-        }else if (dobAfter != null){
-            return studentService.getStudentsBornAfter(dobAfter);
+        List<Student> students;
+
+        if (id != null) {
+            students = studentService.getStudentsById(id);
+        } else if (name != null) {
+            students = studentService.getStudentsByName(name);
+        } else if (email != null) {
+            students = studentService.getStudentsByEmail(email);
+        } else if (dobAfter != null && dobBefore != null) {
+            students = studentService.getStudentsBornBetween(dobAfter, dobBefore);
+        } else if (dobAfter != null) {
+            students = studentService.getStudentsBornAfter(dobAfter);
         } else if (dobBefore != null) {
-            return studentService.getStudentsBornBefore(dobBefore);
-        }else {
-            return studentService.getStudents();
+            students = studentService.getStudentsBornBefore(dobBefore);
+        } else {
+            students = studentService.getStudents();
         }
+
+        return mapStudentsToStudentDtos(students);
     }
+
+    private List<StudentDto> mapStudentsToStudentDtos(List<Student> students) {
+        List<StudentDto> studentDtos = new ArrayList<>();
+        for (Student student : students) {
+            List<Long> coursesIds = new ArrayList<>();
+            for (Course course : student.getCourses()) {
+                coursesIds.add(course.getId());
+            }
+
+            StudentDto studentDto = new StudentDto(
+                    student.getName(),
+                    student.getEmail(),
+                    student.getDob(),
+                    coursesIds
+            );
+
+            studentDtos.add(studentDto);
+        }
+        return studentDtos;
+    }
+
 
     private void validateParameters(String name, String email, Long id, LocalDate dobAfter, LocalDate dobBefore) {
         boolean areMultipleParametersPresent = (coutNotNull(name, email, id) > 1) ||

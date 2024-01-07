@@ -1,9 +1,11 @@
 package com.example.demo.student;
 
+import com.example.demo.course.Course;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 @Entity
 @Table
@@ -25,6 +27,16 @@ public class Student {
 
     @Transient
     private Integer age;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id"))
+    private List<Course> courses;
+
+
 
     public Student() {
     }
@@ -81,6 +93,10 @@ public class Student {
     public void setAge(Integer age) {
         this.age = age;
     }
+
+    public List<Course> getCourses() {return courses;}
+
+    public void setCourses(List<Course> courses) {this.courses = courses;}
 
     @Override
     public String toString() {
